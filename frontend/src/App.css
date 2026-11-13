@@ -1856,3 +1856,7 @@ select:focus-visible {
   .dashboard-stats > div, .dashboard-deadlines { padding: 16px; }
   .dashboard-deadline-list li { flex-direction: column; gap: 10px; }
 }
+
+.application-csv-export { margin: 20px 0; }
+.application-csv-export p { color: var(--muted); font-size: 13px; line-height: 1.6; }
+.application-csv-export [role="alert"] { color: #9f3b32; }

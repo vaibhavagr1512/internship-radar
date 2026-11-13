@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Bookmark, RefreshCw, Trash2 } from 'lucide-react'
 import InternshipCard from './InternshipCard.jsx'
 import ApplicationDetailsEditor from './ApplicationDetailsEditor.jsx'
+import ApplicationCsvExport from './ApplicationCsvExport.jsx'
 import {
   APPLICATION_STATUSES,
   statusLabel,
@@ -68,6 +69,11 @@ export default function ApplicationTracker({ tracker, onExplore }) {
           Refresh tracker
         </button>
       </div>
+      <ApplicationCsvExport
+        applications={visible}
+        status={status}
+        disabled={tracker.loading || tracker.error || tracker.pending.size > 0}
+      />
       {tracker.loading ? (
         <p role="status">Loading your applications…</p>
       ) : tracker.error ? (
