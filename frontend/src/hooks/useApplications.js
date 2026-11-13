@@ -4,6 +4,7 @@ import {
   removeApplication,
   saveApplication,
   updateApplicationStatus,
+  updateApplicationDetails,
 } from '../services/applicationApi.js'
 
 export default function useApplications() {
@@ -96,6 +97,15 @@ export default function useApplications() {
       'Application status updated.',
     )
   }
+  function updateDetails(id, details) {
+    return mutate(
+      `application:${id}`,
+      () => updateApplicationDetails(id, details),
+      (applications, updated) =>
+        applications.map((item) => (item.id === id ? updated : item)),
+      'Application details saved.',
+    )
+  }
   function remove(id) {
     return mutate(
       `application:${id}`,
@@ -112,6 +122,7 @@ export default function useApplications() {
     refresh,
     save,
     update,
+    updateDetails,
     remove,
   }
 }

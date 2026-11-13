@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Bookmark, RefreshCw, Trash2 } from 'lucide-react'
 import InternshipCard from './InternshipCard.jsx'
+import ApplicationDetailsEditor from './ApplicationDetailsEditor.jsx'
 import {
   APPLICATION_STATUSES,
   statusLabel,
@@ -150,6 +151,13 @@ export default function ApplicationTracker({ tracker, onExplore }) {
                         ))}
                       </select>
                     </label>
+                    <ApplicationDetailsEditor
+                      application={application}
+                      disabled={
+                        busy || tracker.loading || tracker.pending.size > 0
+                      }
+                      onSave={tracker.updateDetails}
+                    />
                     <p className="tracking-timestamps">
                       Saved {displayTimestamp(application.savedAt)}
                       <br />

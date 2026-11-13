@@ -1,6 +1,6 @@
 {
   "info": {
-    "name": "Internship Radar \u2014 Days 1\u20135",
+    "name": "Internship Radar \u2014 Days 1\u20137",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "description": "Run against the local demo app. Selects an untracked demo internship, creates one tracking entry, and removes it. Existing tracking entries are preserved. If interrupted after creation, delete the smokeApplicationId entry manually."
   },
@@ -328,6 +328,135 @@
           }
         }
       }
+    },
+    {
+      "name": "Day 7: Save notes and applied date",
+      "request": {
+        "method": "PUT",
+        "url": "{{baseUrl}}/api/applications/{{smokeApplicationId}}/details",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"notes\":\"Follow up on Friday\",\"appliedDate\":\"2026-11-13\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (!pm.collectionVariables.get('smokeApplicationId')) pm.execution.skipRequest();"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200',()=>pm.response.to.have.status(200));",
+              "pm.test('Details saved without resetting status',()=>{const d=pm.response.json();pm.expect(d.notes).to.equal('Follow up on Friday');pm.expect(d.appliedDate).to.equal('2026-11-13');pm.expect(d.status).to.equal('INTERVIEW')});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Day 7: Reject invalid date",
+      "request": {
+        "method": "PUT",
+        "url": "{{baseUrl}}/api/applications/{{smokeApplicationId}}/details",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"notes\":\"Not saved\",\"appliedDate\":\"13/11/2026\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (!pm.collectionVariables.get('smokeApplicationId')) pm.execution.skipRequest();"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 400',()=>pm.response.to.have.status(400));",
+              "pm.test('Invalid date rejected',()=>pm.expect(pm.response.json().status).to.equal(400));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Day 7: Clear details",
+      "request": {
+        "method": "PUT",
+        "url": "{{baseUrl}}/api/applications/{{smokeApplicationId}}/details",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"notes\":\"\",\"appliedDate\":null}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (!pm.collectionVariables.get('smokeApplicationId')) pm.execution.skipRequest();"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200',()=>pm.response.to.have.status(200));",
+              "pm.test('Details cleared',()=>{const d=pm.response.json();pm.expect(d.notes).to.equal('');pm.expect(d.appliedDate).to.equal(null);pm.expect(d.status).to.equal('INTERVIEW')});"
+            ]
+          }
+        }
+      ]
     },
     {
       "name": "11. Remove only the test entry",

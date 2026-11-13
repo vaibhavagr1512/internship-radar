@@ -2,10 +2,13 @@ package com.internshipradar;
 
 import jakarta.persistence.*;
 import java.time.Instant;
+import java.time.LocalDate;
 import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.type.SqlTypes;
 
 @Entity
+@DynamicUpdate
 @Table(name = "internship_applications", uniqueConstraints =
     @UniqueConstraint(name = "uk_application_internship", columnNames = "internship_id"))
 public class TrackedApplication {
@@ -28,6 +31,12 @@ public class TrackedApplication {
     @Column(nullable = false)
     private Instant updatedAt;
 
+    @Column(nullable = false, length = 2000)
+    private String notes = "";
+
+    @Column
+    private LocalDate appliedDate;
+
     protected TrackedApplication() {}
 
     public TrackedApplication(Internship internship) {
@@ -42,6 +51,14 @@ public class TrackedApplication {
         this.updatedAt = Instant.now();
     }
 
+    public void updateDetails(String notes, LocalDate appliedDate) {
+        this.notes = notes;
+        this.appliedDate = appliedDate;
+        this.updatedAt = Instant.now();
+    }
+
+    public String getNotes() { return notes; }
+    public LocalDate getAppliedDate() { return appliedDate; }
     public Long getId() { return id; }
     public Internship getInternship() { return internship; }
     public ApplicationStatus getStatus() { return status; }

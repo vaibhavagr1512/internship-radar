@@ -1649,3 +1649,72 @@ select:focus-visible {
     gap: 7px;
   }
 }
+
+/* Day 7: plain-text notes and a calendar applied date */
+.application-details {
+  margin-top: 20px;
+  border-top: 1px solid #e3eadc;
+  padding-top: 17px;
+}
+.application-details h4 {
+  margin: 0 0 12px;
+  font-size: 13px;
+  color: #3c6338;
+}
+.application-details label {
+  margin-top: 12px;
+}
+.application-details input,
+.application-details textarea {
+  width: 100%;
+  min-width: 0;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 400;
+  padding: 10px;
+  border: 1px solid #d8e3cf;
+  border-radius: 7px;
+  background: white;
+  color: #334f2d;
+}
+.application-details textarea {
+  resize: vertical;
+  line-height: 1.7;
+  min-height: 105px;
+}
+.application-details textarea:focus-visible {
+  outline: 3px solid #4a977d;
+  outline-offset: 3px;
+}
+.notes-meta {
+  margin: 7px 0 12px;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 10px;
+  color: #748268;
+}
+.notes-meta span:last-child {
+  white-space: nowrap;
+}
+.details-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.details-actions .primary-button,
+.details-actions .secondary-button {
+  font-size: 11px;
+  padding: 9px 12px;
+}
+.unsaved-details {
+  margin: 8px 0 0;
+  font-size: 10px;
+  color: #8a6d34;
+}
+.application-details input:disabled,
+.application-details textarea:disabled {
+  background: #f4f6ef;
+  opacity: 0.75;
+}

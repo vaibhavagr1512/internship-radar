@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
+import java.time.LocalDate;
 
 @Service
 @Transactional(readOnly = true)
@@ -50,6 +51,19 @@ public class ApplicationService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "A valid status is required");
         TrackedApplication application = requireApplication(id);
         application.updateStatus(status);
+        applications.flush();
+        return ApplicationResponse.from(application);
+    }
+
+    @Transactional
+    public ApplicationResponse updateDetails(Long id, String notes, LocalDate appliedDate) {
+        String text = notes == null ? "" : notes;
+        if (text.length() > 2000)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Notes must contain at most 2000 characters");
+        if (appliedDate != null && (appliedDate.getYear() < 1000 || appliedDate.getYear() > 9999))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Applied date must be between years 1000 and 9999");
+        TrackedApplication application = requireApplication(id);
+        application.updateDetails(text, appliedDate);
         applications.flush();
         return ApplicationResponse.from(application);
     }

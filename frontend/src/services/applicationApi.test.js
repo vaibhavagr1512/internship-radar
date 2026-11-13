@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest'
 import {
   fetchApplications,
+  updateApplicationDetails,
   saveApplication,
   updateApplicationStatus,
   removeApplication,
@@ -69,5 +70,31 @@ describe('application API client', () => {
     await expect(fetchApplications()).rejects.toThrow(
       'Unexpected applications response',
     )
+  })
+})
+
+describe('application detail API', () => {
+  it('uses PUT for replacing notes and applied date without a status field', async () => {
+    const { fetch } = mockResponse(200, {
+      id: 42,
+      notes: 'Follow up',
+      appliedDate: '2026-11-13',
+    })
+    await updateApplicationDetails(42, {
+      notes: 'Follow up',
+      appliedDate: '2026-11-13',
+    })
+    expect(fetch).toHaveBeenCalledWith(
+      '/api/applications/42/details',
+      expect.objectContaining({
+        method: 'PUT',
+        body: '{"notes":"Follow up","appliedDate":"2026-11-13"}',
+      }),
+    )
+  })
+  it('preserves null when clearing the date', async () => {
+    const { fetch } = mockResponse()
+    await updateApplicationDetails(42, { notes: '', appliedDate: null })
+    expect(fetch.mock.calls[0][1].body).toBe('{"notes":"","appliedDate":null}')
   })
 })
