@@ -1,0 +1,5 @@
+-- Fictional DEMO listings; these are not verified or active opportunities.
+INSERT INTO internships (title, company, location, work_mode, role_category, eligibility_text, application_url, normalized_application_url, deadline, last_verified_date) VALUES
+('[DEMO] Java Backend Intern', '[DEMO] Example Systems', 'Bengaluru', 'HYBRID', 'BACKEND', 'DEMO ONLY: third-year B.Tech students; Java and SQL basics.', 'https://example.com/internships/java', 'https://example.com/internships/java', NULL, '2026-11-12'),
+('[DEMO] React Frontend Intern', '[DEMO] Sample Labs', 'Remote', 'REMOTE', 'FRONTEND', 'DEMO ONLY: third-year B.Tech students; React basics.', 'https://example.com/internships/react', 'https://example.com/internships/react', '2026-12-31', '2026-11-12'),
+('[DEMO] Software Engineering Intern', '[DEMO] Java Learning Co', 'Hyderabad', 'ONSITE', 'SOFTWARE', 'DEMO ONLY: third-year B.Tech students; data structures basics.', 'https://example.com/internships/software', 'https://example.com/internships/software', NULL, '2026-11-12');

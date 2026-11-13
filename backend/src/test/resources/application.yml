@@ -1,0 +1,14 @@
+spring:
+  jackson:
+    deserialization:
+      accept-float-as-int: false
+  datasource:
+    url: ${TEST_DB_URL:jdbc:h2:mem:radar;MODE=MySQL;DB_CLOSE_DELAY=-1}
+    username: ${TEST_DB_USERNAME:sa}
+    password: ${TEST_DB_PASSWORD:}
+  jpa:
+    hibernate:
+      ddl-auto: ${TEST_DDL_AUTO:create-drop}
+    open-in-view: false
+  flyway:
+    enabled: ${TEST_FLYWAY_ENABLED:false}

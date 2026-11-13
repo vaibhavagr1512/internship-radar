@@ -1,0 +1,33 @@
+name: internship-radar
+services:
+  mysql:
+    image: mysql:8.4
+    environment:
+      MYSQL_RANDOM_ROOT_PASSWORD: "yes"
+      MYSQL_DATABASE: internship_radar
+      MYSQL_USER: radar
+      MYSQL_PASSWORD: ${DB_PASSWORD:-local-radar-demo-only}
+    volumes:
+      - radar-mysql:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "MYSQL_PWD=\"$${MYSQL_PASSWORD}\" mysql --protocol=TCP -h 127.0.0.1 -u radar -D internship_radar -e 'SELECT 1' >/dev/null 2>&1"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 30s
+    restart: unless-stopped
+  app:
+    build: .
+    environment:
+      DB_URL: jdbc:mysql://mysql:3306/internship_radar
+      DB_USERNAME: radar
+      DB_PASSWORD: ${DB_PASSWORD:-local-radar-demo-only}
+      SPRING_PROFILES_ACTIVE: demo
+    ports:
+      - "127.0.0.1:${APP_PORT:-3000}:8080"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    restart: unless-stopped
+volumes:
+  radar-mysql:

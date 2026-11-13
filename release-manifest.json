@@ -1,0 +1,237 @@
+{
+  "format": 1,
+  "files": {
+    ".dockerignore": {
+      "sha256": "3e4703fb837436c6c97976284f1596f59afc81bc87ae6b3a6c056898f7c17073",
+      "bytes": 49
+    },
+    ".env.example": {
+      "sha256": "07ef2f0c393eb24807e115a449efc4cf02620a77186d3698d449e6f84cf5582d",
+      "bytes": 218
+    },
+    ".gitignore": {
+      "sha256": "26a7c59a50ed287692c64cfe989f2c02f1cd0245c9b64a8f97a1bde714ef28da",
+      "bytes": 194
+    },
+    "Dockerfile": {
+      "sha256": "764cd50276e0bdfe4229d66cfaa2da8e7a4ebd4618f2cc31919ac1c1ef9c63a4",
+      "bytes": 472
+    },
+    "README.md": {
+      "sha256": "cb2839811e9fe4c0353bfb9571b7ecbb3473b26681981d8d4e2bacc521d87e79",
+      "bytes": 28068
+    },
+    "START_HERE.md": {
+      "sha256": "a37cb0b54955cb7235c41238a9804c9e0eb90fc335f71717111190c7201fb731",
+      "bytes": 3629
+    },
+    "VERIFICATION.md": {
+      "sha256": "36550594064ccffbdfb02f47af41df1da8d5a24257485494d0d7c530e0f3b92c",
+      "bytes": 3766
+    },
+    "backend/.mvn/wrapper/maven-wrapper.properties": {
+      "sha256": "b0e7995e6522a43fb50b482c0ae81bf639fe7b290d11015c9cb3367f99f1bbb8",
+      "bytes": 166
+    },
+    "backend/mvnw": {
+      "sha256": "cae96cef89ebea3531221f4ae17c23cf8edf67d00eae8306d4186ae1bbed4d02",
+      "bytes": 11790
+    },
+    "backend/mvnw.cmd": {
+      "sha256": "46eedb8419bd14fe70d5bb2916d7b6f51806e51b39d5b76a42610384ca929c1c",
+      "bytes": 8481
+    },
+    "backend/pom.xml": {
+      "sha256": "d4fcfffc5acf4dae98a6d8b39449c46b520f92cc7e7c69d156af3affe42caeec",
+      "bytes": 1908
+    },
+    "backend/src/main/java/com/internshipradar/ApplicationController.java": {
+      "sha256": "53af9a8e50a5157eaa71e555f3da47354e356538ee652688ce07cba201a6e67d",
+      "bytes": 1504
+    },
+    "backend/src/main/java/com/internshipradar/ApplicationRepository.java": {
+      "sha256": "ad379b829a4970153fd01dede08e15cb2ef608e85e3ac92f25c7ed9ed8b0f372",
+      "bytes": 577
+    },
+    "backend/src/main/java/com/internshipradar/ApplicationResponse.java": {
+      "sha256": "a0065e5838ed810cf6789b0bb186ce71d1e05b820160df6ffad03712f15c02a5",
+      "bytes": 1376
+    },
+    "backend/src/main/java/com/internshipradar/ApplicationService.java": {
+      "sha256": "414320b744d3d7e94d1ca6b545f0b529e6663034a8214e259746d2f876e722e2",
+      "bytes": 2904
+    },
+    "backend/src/main/java/com/internshipradar/ApplicationStatus.java": {
+      "sha256": "6675085e3e8346dc2bb6155bd10ebf08ddbd70b483c6c6a3e80c35c591088bd5",
+      "bytes": 111
+    },
+    "backend/src/main/java/com/internshipradar/ApplicationUrl.java": {
+      "sha256": "bb51c4ee9c695055d5e3d849f349d50ca2e304ff20119e63c138be5fd877c533",
+      "bytes": 1385
+    },
+    "backend/src/main/java/com/internshipradar/Internship.java": {
+      "sha256": "1866777567e3c5b9fd0f40383480818c0c042ac857dfdf656745fb1ebc9d55d8",
+      "bytes": 2402
+    },
+    "backend/src/main/java/com/internshipradar/InternshipController.java": {
+      "sha256": "63837eaea2c26387d4325060d5f1ff4455100a14bf9e67e4b0786f0ca79135d8",
+      "bytes": 563
+    },
+    "backend/src/main/java/com/internshipradar/InternshipRadarApplication.java": {
+      "sha256": "edec1a827eb9b0b3c84b73a873a8b3b056c9d3abb8f005775382ea860e84c339",
+      "bytes": 326
+    },
+    "backend/src/main/java/com/internshipradar/InternshipRepository.java": {
+      "sha256": "1c02e159a61731ac50a8ca784f2a7c0a8163b7b6ed9ef3af59eb7d06600cc1d2",
+      "bytes": 367
+    },
+    "backend/src/main/java/com/internshipradar/InternshipService.java": {
+      "sha256": "46d6f4ff383869b516e4dfe17342c29f78c476155e1d5d627883f56abfe343fd",
+      "bytes": 975
+    },
+    "backend/src/main/java/com/internshipradar/TrackedApplication.java": {
+      "sha256": "ff8dcf9d6166bc131d949cd00108b32457663eb8934b3203b567983f0826ed02",
+      "bytes": 1554
+    },
+    "backend/src/main/resources/application-demo.yml": {
+      "sha256": "31fb5008857f4032ca84c7f464d42d418470f24de7ecc4d2e5c7bc4fc2e92316",
+      "bytes": 74
+    },
+    "backend/src/main/resources/application.yml": {
+      "sha256": "da80d3da67de07ae4ef244aeefdab10b2cba854477d55feb7e61ef10aa9cb41e",
+      "bytes": 357
+    },
+    "backend/src/main/resources/db/demo/V2__demo_internships.sql": {
+      "sha256": "8515e7ea4ebe8fb98d2462b181d64673aedf68c96eb4b2b2ce3fb0a101d47b9f",
+      "bytes": 1038
+    },
+    "backend/src/main/resources/db/migration/V1__create_internships.sql": {
+      "sha256": "088dd66a4b7b14c68c1c7904f3a2fc159ebd3ba10b5a013baa71028229f2ec2e",
+      "bytes": 588
+    },
+    "backend/src/main/resources/db/migration/V3__create_application_tracker.sql": {
+      "sha256": "9a4cdc85d353db7c84cb88cfec5d4507cb749ca56a5ee8a57b8a6965327f7ed0",
+      "bytes": 565
+    },
+    "backend/src/test/java/com/internshipradar/ApplicationApiTest.java": {
+      "sha256": "13d3d46d081956e7acdf4e930189c8b845ddf421775dbac29256d0bfc71c97da",
+      "bytes": 7906
+    },
+    "backend/src/test/java/com/internshipradar/ApplicationSerializationTest.java": {
+      "sha256": "3779df414f5869de6b3cc17563403359a582c194c6e9618ec1dd98c67e24fb8d",
+      "bytes": 2752
+    },
+    "backend/src/test/java/com/internshipradar/ApplicationUrlTest.java": {
+      "sha256": "5554539eb74886611fcc582845f5909209d4b9864eb31c3a266d0d0359b20187",
+      "bytes": 1349
+    },
+    "backend/src/test/java/com/internshipradar/InternshipApiTest.java": {
+      "sha256": "71527b23f2b6e29ab5a462e6819e8fab1eb6c2f9e9b611d2a2d7ea0375dfddbd",
+      "bytes": 4680
+    },
+    "backend/src/test/resources/application.yml": {
+      "sha256": "92652e2b1c60855fe6148094423bdbe7602ee2fcbedf0d1fb60f836a14c1f60a",
+      "bytes": 373
+    },
+    "compose.yaml": {
+      "sha256": "897b8fc7b10e21d5760629430f19814054423eed1a4f8df13ff145dfd1045877",
+      "bytes": 949
+    },
+    "dist/internship-radar.jar": {
+      "sha256": "aff78d58430409b21b6179b2d163f91313d878faf7467aebc22f5bd17f745beb",
+      "bytes": 54874738
+    },
+    "frontend/index.html": {
+      "sha256": "3d5125cf1ea4db6dbf198f59b6d090c0196973d88fb5176fe37c40f92c2a0428",
+      "bytes": 621
+    },
+    "frontend/package-lock.json": {
+      "sha256": "75e8f856b25c2a5b1cd4ebb910e97e924f02d3243e0ede024a82fce88172f526",
+      "bytes": 103727
+    },
+    "frontend/package.json": {
+      "sha256": "e130433eaee80fa698899e4019d9526f8d65a6544f75dcc82c516278724ea0a9",
+      "bytes": 764
+    },
+    "frontend/public/radar.svg": {
+      "sha256": "790159da22719eb4b4cb0cf94de080d66a674e24f5aab9b9269634233dbfdb13",
+      "bytes": 303
+    },
+    "frontend/src/App.css": {
+      "sha256": "38a317abd8946c170be714c46e9e63bd357afb320d674c2c17fb6a13e3a294f5",
+      "bytes": 25456
+    },
+    "frontend/src/App.jsx": {
+      "sha256": "285b341ef5d7d820e927ad84f3bf3d4f3ba72c288bd6cf541b1d9994fea17359",
+      "bytes": 14215
+    },
+    "frontend/src/App.test.jsx": {
+      "sha256": "b39b2741f620b011b11abfd07ad7f4309949faa4727e757c80ef188851c5de62",
+      "bytes": 6298
+    },
+    "frontend/src/ApplicationTracking.test.jsx": {
+      "sha256": "a3f7fbf3e64cc68a4e287796138be3b056eaf9c6a96b69f6b6ab3fb4764ccdf1",
+      "bytes": 10810
+    },
+    "frontend/src/components/ApplicationTracker.jsx": {
+      "sha256": "02ff07e221bf483ef35360c96b2184be4f084e8a9ba8eb465f12eff410520f26",
+      "bytes": 6404
+    },
+    "frontend/src/components/InternshipCard.jsx": {
+      "sha256": "7e7e265bc9d2b00306d341d64c899814924f5014725d2cf2d82a9344ac4c0df0",
+      "bytes": 3837
+    },
+    "frontend/src/components/InternshipCard.test.jsx": {
+      "sha256": "f670624ec2c6dd24fd82f54dc0a3ccc464a126fc75bf6ccfece52867f02548ea",
+      "bytes": 2585
+    },
+    "frontend/src/components/SearchBar.jsx": {
+      "sha256": "e6475d7bae139b8f59c61e4606a43d0e390abc807fe5f6d86da011b0f5efd2fa",
+      "bytes": 1059
+    },
+    "frontend/src/hooks/useApplications.js": {
+      "sha256": "020ba6d2cd1e1582431adce2b417bc7f7c35970beea597ca32c8ef4b7cab548a",
+      "bytes": 3328
+    },
+    "frontend/src/main.jsx": {
+      "sha256": "e7009e3490c5ad47d41727a4c3a2888eea130ce47a09f7d99a9cf74b608b7e89",
+      "bytes": 233
+    },
+    "frontend/src/services/applicationApi.js": {
+      "sha256": "2a0aec3968676dd4f95e1f3ab2607653b72c658737050cdab9da13c472f789d0",
+      "bytes": 1322
+    },
+    "frontend/src/services/applicationApi.test.js": {
+      "sha256": "7b4c97a52db2584e36a476a09625ce4f09c0e55800fae35278907fcd5338e4ce",
+      "bytes": 2411
+    },
+    "frontend/src/services/internshipApi.js": {
+      "sha256": "ebb2268717cf53d89fd4f3318a3d669aaf93cb7e00a5bde4c318b2b58cada714",
+      "bytes": 626
+    },
+    "frontend/src/services/internshipApi.test.js": {
+      "sha256": "2b3d0e2601a475c99faa347ab81a19974db1177aab2560596806212f97e8a09a",
+      "bytes": 1883
+    },
+    "frontend/src/test/fixtures.js": {
+      "sha256": "e23ae2611e9bc563a68d84302235978ce442eaf88b58b270a2be832f32d84915",
+      "bytes": 1198
+    },
+    "frontend/src/test/setup.js": {
+      "sha256": "f1b9c576e043f5656c97b1e0149a7a7b52a94e3c0f8dcfbc251d6d1ef6bb269a",
+      "bytes": 188
+    },
+    "frontend/vite.config.js": {
+      "sha256": "8dac7ff3fcd2629345c3b3ba8de4380193737ef5f8ff3f118548e2d7e24e3206",
+      "bytes": 405
+    },
+    "postman/Internship-Radar.postman_collection.json": {
+      "sha256": "ec67e456e2f0c9bbf548b31a6970e4884e1082b26c68a7c3eb742cde4c72de3a",
+      "bytes": 10963
+    },
+    "scripts/build-release.mjs": {
+      "sha256": "8f800aaf76d7b96723fbf40e29e3ab9614b7ecbdd88d4cd4a5adaf4acce899d3",
+      "bytes": 1446
+    }
+  }
+}
