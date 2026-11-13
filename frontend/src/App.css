@@ -1836,3 +1836,23 @@ select:focus-visible {
     font-size: 14px;
   }
 }
+
+.application-dashboard { padding: 32px 0; }
+.application-dashboard h1 { font-size: clamp(26px, 4vw, 36px); color: var(--ink); }
+.dashboard-actions { display: flex; flex-wrap: wrap; gap: 12px; margin: 24px 0; }
+.dashboard-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin: 28px 0; }
+.dashboard-stats > div, .dashboard-deadlines { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 22px; }
+.dashboard-stats dt { color: var(--muted); font-size: 14px; }
+.dashboard-stats dd { margin: 8px 0 0; font-size: 32px; font-weight: 700; color: var(--green); }
+.dashboard-deadlines h2 { margin-top: 0; }
+.dashboard-deadlines > p { color: var(--muted); line-height: 1.6; }
+.dashboard-deadline-list { list-style: none; padding: 0; margin: 20px 0 0; }
+.dashboard-deadline-list li { display: flex; justify-content: space-between; gap: 18px; border-top: 1px solid var(--border); padding: 18px 0; }
+.dashboard-deadline-list p { margin: 8px 0 0; color: var(--muted); font-size: 14px; }
+.dashboard-deadline-list time { white-space: nowrap; }
+.deadline-today { display: block; color: var(--green); font-size: 13px; margin-top: 6px; }
+@media (max-width: 600px) {
+  .dashboard-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .dashboard-stats > div, .dashboard-deadlines { padding: 16px; }
+  .dashboard-deadline-list li { flex-direction: column; gap: 10px; }
+}
