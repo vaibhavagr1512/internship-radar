@@ -2,10 +2,12 @@ import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 import App from './App.jsx'
-import { internships } from './test/fixtures.js'
+import { internships, filterOptions } from './test/fixtures.js'
 
 function installApi() {
   const fetch = vi.fn(async (url) => {
+    if (url.startsWith('/api/internships/filter-options'))
+      return { ok: true, json: async () => filterOptions }
     if (url.startsWith('/api/applications'))
       return { ok: true, json: async () => [] }
     const search =

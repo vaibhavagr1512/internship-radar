@@ -1,6 +1,6 @@
 {
   "info": {
-    "name": "Internship Radar \u2014 Days 1\u20133",
+    "name": "Internship Radar \u2014 Days 1\u20134",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "description": "Run against the local demo app. Selects an untracked demo internship, creates one tracking entry, and removes it. Existing tracking entries are preserved. If interrupted after creation, delete the smokeApplicationId entry manually."
   },
@@ -384,6 +384,168 @@
         "header": [],
         "url": "{{baseUrl}}/api/applications/{{smokeApplicationId}}"
       }
+    },
+    {
+      "name": "Day 4: Filter options",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/internships/filter-options"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('Work modes from database', () => pm.expect(pm.response.json().workModes).to.include('HYBRID'));",
+              "pm.test('Locations from database', () => pm.expect(pm.response.json().locations).to.include('Bengaluru'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Day 4: Remote work mode",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/internships?workMode=REMOTE"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('One remote role', () => pm.expect(pm.response.json()).to.have.lengthOf(1));",
+              "pm.test('React role', () => pm.expect(pm.response.json()[0].title).to.include('React'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Day 4: Backend category",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/internships?roleCategory=BACKEND"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('One backend role', () => pm.expect(pm.response.json()).to.have.lengthOf(1));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Day 4: Location",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/internships?location=Hyderabad"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('One Hyderabad role', () => pm.expect(pm.response.json()).to.have.lengthOf(1));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Day 4: Combined search and filters",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/internships?search=java&workMode=HYBRID&roleCategory=BACKEND&location=Bengaluru"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('Combined match', () => pm.expect(pm.response.json()).to.have.lengthOf(1));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Day 4: Case and whitespace",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/internships?search=JAVA&workMode=%20hybrid%20&roleCategory=backend&location=bENGALURU"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('Normalized match', () => pm.expect(pm.response.json()).to.have.lengthOf(1));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Day 4: Incompatible filters",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/internships?workMode=HYBRID&roleCategory=FRONTEND"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('No matches', () => pm.expect(pm.response.json()).to.deep.equal([]));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Day 4: Blank filters",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/internships?workMode=%20&roleCategory=&location=%20"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('All records', () => pm.expect(pm.response.json()).to.have.lengthOf(3));"
+            ]
+          }
+        }
+      ]
     }
   ]
 }

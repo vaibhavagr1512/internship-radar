@@ -10,7 +10,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:api": "node scripts/check-api.mjs",
-    "test:tracker-api": "node scripts/check-tracker-api.mjs"
+    "test:tracker-api": "node scripts/check-tracker-api.mjs",
+    "test:filters-api": "node scripts/check-filters-api.mjs"
   },
   "dependencies": {
     "lucide-react": "^0.468.0",
