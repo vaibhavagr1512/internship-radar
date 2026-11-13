@@ -49,3 +49,10 @@ export function updateApplicationStatus(id, status) {
 export function removeApplication(id) {
   return request(`/${id}`, { method: 'DELETE' })
 }
+
+export function updateApplicationDetails(id, { notes, appliedDate }) {
+  return request(`/${id}/details`, {
+    method: 'PUT',
+    body: JSON.stringify({ notes, appliedDate }),
+  })
+}

@@ -1,4 +1,4 @@
-import { act, render, screen, waitFor } from '@testing-library/react'
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 import App from './App.jsx'
@@ -44,9 +44,22 @@ function installTrackingApi(initial = []) {
       applications = [saved, ...applications]
       return response(201, saved)
     }
-    const id = Number(url.split('/').at(-1))
+    const id = Number(
+      url.endsWith('/details') ? url.split('/').at(-2) : url.split('/').at(-1),
+    )
     const item = applications.find((item) => item.id === id)
     if (!item) return response(404, {})
+    if (method === 'PUT') {
+      const updated = {
+        ...item,
+        ...JSON.parse(options.body),
+        updatedAt: '2026-11-13T10:00:00Z',
+      }
+      applications = applications.map((item) =>
+        item.id === id ? updated : item,
+      )
+      return response(200, updated)
+    }
     if (method === 'PATCH') {
       const updated = {
         ...item,
@@ -71,6 +84,77 @@ async function openTracker(user) {
 }
 
 describe('application tracking workflow', () => {
+  it('saves notes and applied date and reloads them on a new mount', async () => {
+    installTrackingApi([record()])
+    const user = userEvent.setup()
+    const app = render(<App />)
+    await screen.findByRole('button', {
+      name: 'Already tracked Java Backend Intern',
+    })
+    await openTracker(user)
+    await user.type(
+      screen.getByRole('textbox', { name: 'Notes for Java Backend Intern' }),
+      'Interview on Friday',
+    )
+    fireEvent.change(
+      screen.getByLabelText('Applied date for Java Backend Intern'),
+      { target: { value: '2026-11-13' } },
+    )
+    await user.click(
+      screen.getByRole('button', {
+        name: 'Save details for Java Backend Intern',
+      }),
+    )
+    await screen.findByText('Application details saved.')
+    app.unmount()
+    render(<App />)
+    await screen.findByRole('button', {
+      name: 'Already tracked Java Backend Intern',
+    })
+    await openTracker(user)
+    expect(
+      screen.getByRole('textbox', { name: 'Notes for Java Backend Intern' }),
+    ).toHaveValue('Interview on Friday')
+    expect(
+      screen.getByLabelText('Applied date for Java Backend Intern'),
+    ).toHaveValue('2026-11-13')
+  })
+  it('keeps a failed note draft available for retry', async () => {
+    const { controls } = installTrackingApi([record()])
+    const user = userEvent.setup()
+    render(<App />)
+    await screen.findByRole('button', {
+      name: 'Already tracked Java Backend Intern',
+    })
+    await openTracker(user)
+    await user.type(
+      screen.getByRole('textbox', { name: 'Notes for Java Backend Intern' }),
+      'Keep my draft',
+    )
+    controls.failWrite = true
+    await user.click(
+      screen.getByRole('button', {
+        name: 'Save details for Java Backend Intern',
+      }),
+    )
+    await screen.findByRole('alert')
+    expect(
+      screen.getByRole('textbox', { name: 'Notes for Java Backend Intern' }),
+    ).toHaveValue('Keep my draft')
+    controls.failWrite = false
+    await user.click(
+      screen.getByRole('button', {
+        name: 'Save details for Java Backend Intern',
+      }),
+    )
+    await screen.findByText('Application details saved.')
+    expect(
+      screen.getByRole('button', {
+        name: 'Save details for Java Backend Intern',
+      }),
+    ).toBeDisabled()
+  })
+
   it('disables overlapping writes until the first save is confirmed', async () => {
     const { fetch } = installTrackingApi()
     const user = userEvent.setup()

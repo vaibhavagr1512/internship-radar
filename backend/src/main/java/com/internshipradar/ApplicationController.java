@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.net.URI;
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -15,6 +16,7 @@ public class ApplicationController {
 
     public record SaveApplicationRequest(Long internshipId) {}
     public record UpdateStatusRequest(ApplicationStatus status) {}
+    public record UpdateDetailsRequest(String notes, LocalDate appliedDate) {}
 
     @GetMapping
     public List<ApplicationResponse> list(@RequestParam(required = false) ApplicationStatus status) {
@@ -33,6 +35,11 @@ public class ApplicationController {
     @PatchMapping("/{id}")
     public ApplicationResponse update(@PathVariable Long id, @RequestBody UpdateStatusRequest request) {
         return service.updateStatus(id, request.status());
+    }
+
+    @PutMapping("/{id}/details")
+    public ApplicationResponse updateDetails(@PathVariable Long id, @RequestBody UpdateDetailsRequest request) {
+        return service.updateDetails(id, request.notes(), request.appliedDate());
     }
 
     @DeleteMapping("/{id}")
