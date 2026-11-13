@@ -38,3 +38,9 @@ export const internships = [
     lastVerifiedDate: '2026-11-12',
   },
 ]
+
+export const filterOptions = {
+  workModes: ['HYBRID', 'ONSITE', 'REMOTE'],
+  roleCategories: ['BACKEND', 'FRONTEND', 'SOFTWARE'],
+  locations: ['Bengaluru', 'Hyderabad', 'Remote'],
+}

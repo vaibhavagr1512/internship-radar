@@ -1491,3 +1491,98 @@ select:focus-visible {
     justify-content: center;
   }
 }
+
+/* Day 4: database-backed discovery filters */
+.discovery-filters {
+  margin-top: 23px;
+  padding: 18px;
+  border: 1px solid #e0e7d9;
+  border-radius: 10px;
+  background: #f0f4eb;
+}
+.filters-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #567447;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 14px;
+}
+.filter-fields {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
+  align-items: end;
+  gap: 12px;
+}
+.filter-fields label {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #627655;
+}
+.filter-fields select {
+  width: 100%;
+  font-size: 12px;
+}
+.clear-filters-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 40px;
+  padding: 9px 12px;
+  border: 1px solid #cfdcc4;
+  border-radius: 7px;
+  background: white;
+  color: #4e6c3e;
+  font-size: 11px;
+  white-space: nowrap;
+}
+.clear-filters-button:hover:not(:disabled) {
+  background: #e8f0df;
+}
+.filters-help {
+  margin: 12px 0 0;
+  font-size: 11px;
+  color: #758568;
+  line-height: 1.7;
+}
+.filters-error {
+  color: #8b6542;
+}
+.filters-error button {
+  font: inherit;
+  color: inherit;
+  text-decoration: underline;
+  border: 0;
+  background: transparent;
+  padding: 0 4px;
+}
+@media (max-width: 1150px) {
+  .filter-fields {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .clear-filters-button {
+    grid-column: 1/-1;
+    justify-self: end;
+  }
+}
+@media (max-width: 540px) {
+  .filter-fields {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 13px;
+  }
+  .clear-filters-button {
+    justify-self: stretch;
+  }
+  .filter-fields label {
+    font-size: 12px;
+  }
+  .filter-fields select {
+    font-size: 14px;
+  }
+}

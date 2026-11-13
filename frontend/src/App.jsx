@@ -17,13 +17,28 @@ import InternshipCard from './components/InternshipCard.jsx'
 import SearchBar from './components/SearchBar.jsx'
 import ApplicationTracker from './components/ApplicationTracker.jsx'
 import useApplications from './hooks/useApplications.js'
-import { fetchInternships } from './services/internshipApi.js'
+import {
+  fetchInternships,
+  fetchFilterOptions,
+} from './services/internshipApi.js'
+import InternshipFilters from './components/InternshipFilters.jsx'
 
 export default function App() {
   const [view, setView] = useState('explore')
   const [draft, setDraft] = useState('')
   const [search, setSearch] = useState('')
   const [reload, setReload] = useState(0)
+  const [filters, setFilters] = useState({
+    workMode: '',
+    roleCategory: '',
+    location: '',
+  })
+  const [optionReload, setOptionReload] = useState(0)
+  const [optionState, setOptionState] = useState({
+    options: { workModes: [], roleCategories: [], locations: [] },
+    loading: true,
+    error: false,
+  })
   const [state, setState] = useState({
     internships: [],
     loading: true,
@@ -34,7 +49,7 @@ export default function App() {
     const controller = new AbortController()
     let active = true
     setState({ internships: [], loading: true, error: false })
-    fetchInternships({ search, signal: controller.signal })
+    fetchInternships({ search, ...filters, signal: controller.signal })
       .then((internships) => {
         if (active) setState({ internships, loading: false, error: false })
       })
@@ -46,12 +61,42 @@ export default function App() {
       active = false
       controller.abort()
     }
-  }, [search, reload])
+  }, [search, filters.workMode, filters.roleCategory, filters.location, reload])
 
   const tracker = useApplications()
   const trackedIds = new Set(
     tracker.applications.map((item) => item.internship.id),
   )
+
+  useEffect(() => {
+    const controller = new AbortController()
+    let active = true
+    setOptionState((previous) => ({ ...previous, loading: true, error: false }))
+    fetchFilterOptions({ signal: controller.signal })
+      .then((options) => {
+        if (active) setOptionState({ options, loading: false, error: false })
+      })
+      .catch((error) => {
+        if (active && error.name !== 'AbortError')
+          setOptionState((previous) => ({
+            ...previous,
+            loading: false,
+            error: true,
+          }))
+      })
+    return () => {
+      active = false
+      controller.abort()
+    }
+  }, [optionReload])
+
+  const hasFilters = Object.values(filters).some(Boolean)
+  function clearAllFilters() {
+    setFilters({ workMode: '', roleCategory: '', location: '' })
+    setDraft('')
+    setSearch('')
+    document.getElementById('internship-search')?.focus()
+  }
 
   function runSearch(value) {
     const term = value.trim()
@@ -266,6 +311,18 @@ export default function App() {
                   </button>
                 ))}
               </div>
+              <InternshipFilters
+                filters={filters}
+                options={optionState.options}
+                loading={optionState.loading}
+                error={optionState.error}
+                canClear={hasFilters || Boolean(search) || Boolean(draft)}
+                onChange={(key, value) =>
+                  setFilters((previous) => ({ ...previous, [key]: value }))
+                }
+                onClear={clearAllFilters}
+                onRetry={() => setOptionReload((value) => value + 1)}
+              />
               <div className="results-heading">
                 <p role="status" aria-live="polite">
                   {loading ? (
@@ -281,6 +338,8 @@ export default function App() {
                           {' '}
                           matching <strong>“{search}”</strong>
                         </>
+                      ) : hasFilters ? (
+                        ' matching your filters'
                       ) : (
                         ' to explore'
                       )}
@@ -329,15 +388,17 @@ export default function App() {
                     </span>
                     <h3>No internships found</h3>
                     <p>
-                      Try another role or company, or clear your search to see
-                      all listings.
+                      Try another role, company, or filter combination. Clear
+                      your search and filters to see all listings.
                     </p>
                     <button
                       className="primary-button"
                       type="button"
-                      onClick={clearSearch}
+                      onClick={clearAllFilters}
                     >
-                      View all internships
+                      {hasFilters
+                        ? 'Clear search and filters'
+                        : 'View all internships'}
                     </button>
                   </div>
                 ) : (
