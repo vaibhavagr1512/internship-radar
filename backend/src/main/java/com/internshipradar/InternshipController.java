@@ -11,10 +11,15 @@ public class InternshipController {
     public InternshipController(InternshipService service) { this.service = service; }
 
     @GetMapping
-    public List<Internship> list(@RequestParam(required = false) String search,
+    public Object list(@RequestParam(required = false) String search,
                                 @RequestParam(required = false) String workMode,
                                 @RequestParam(required = false) String roleCategory,
-                                @RequestParam(required = false) String location) {
+                                @RequestParam(required = false) String location,
+                                @RequestParam(required = false) Integer page,
+                                @RequestParam(required = false) Integer size,
+                                @RequestParam(required = false) String sort) {
+        if (page != null || size != null || sort != null)
+            return service.findPage(search, workMode, roleCategory, location, page, size, sort);
         return service.findAll(search, workMode, roleCategory, location);
     }
 

@@ -2,7 +2,7 @@ import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 import App from './App.jsx'
-import { internships, filterOptions } from './test/fixtures.js'
+import { internships, filterOptions, pageResponse } from './test/fixtures.js'
 
 function installApi() {
   const fetch = vi.fn(async (url) => {
@@ -17,8 +17,11 @@ function installApi() {
     return {
       ok: true,
       json: async () =>
-        internships.filter((record) =>
-          `${record.title} ${record.company}`.toLowerCase().includes(search),
+        pageResponse(
+          internships.filter((record) =>
+            `${record.title} ${record.company}`.toLowerCase().includes(search),
+          ),
+          url,
         ),
     }
   })
@@ -76,7 +79,7 @@ describe('internship discovery', () => {
         screen.queryByRole('heading', { name: 'React Frontend Intern' }),
       ).not.toBeInTheDocument()
       expect(fetch).toHaveBeenLastCalledWith(
-        `/api/internships?search=${term}`,
+        `/api/internships?search=${term}&page=0&size=6&sort=lastVerifiedDate%2Cdesc`,
         expect.any(Object),
       )
     },
@@ -158,7 +161,10 @@ describe('internship discovery', () => {
     await user.click(screen.getByRole('button', { name: 'React', exact: true }))
     await waitFor(() => expect(screen.getAllByRole('article')).toHaveLength(1))
     await act(async () =>
-      completeOldRequest({ ok: true, json: async () => internships }),
+      completeOldRequest({
+        ok: true,
+        json: async () => pageResponse(internships),
+      }),
     )
     expect(screen.getAllByRole('article')).toHaveLength(1)
     expect(

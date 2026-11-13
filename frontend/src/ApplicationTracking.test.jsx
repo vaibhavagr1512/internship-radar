@@ -2,7 +2,7 @@ import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 import App from './App.jsx'
-import { internships, filterOptions } from './test/fixtures.js'
+import { internships, filterOptions, pageResponse } from './test/fixtures.js'
 
 const record = (id = 51, internship = internships[0], status = 'SAVED') => ({
   id,
@@ -27,7 +27,8 @@ function installTrackingApi(initial = []) {
   const fetch = vi.fn(async (url, options = {}) => {
     if (url.startsWith('/api/internships/filter-options'))
       return response(200, filterOptions)
-    if (url.startsWith('/api/internships')) return response(200, internships)
+    if (url.startsWith('/api/internships'))
+      return response(200, pageResponse(internships, url))
     const method = options.method || 'GET'
     if (method === 'GET')
       return response(controls.failGet ? 503 : 200, applications)

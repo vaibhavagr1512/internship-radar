@@ -85,12 +85,10 @@ describe('discovery filter API', () => {
   it('rejects a malformed filter option payload', async () => {
     vi.stubGlobal(
       'fetch',
-      vi
-        .fn()
-        .mockResolvedValue({
-          ok: true,
-          json: async () => ({ workModes: ['REMOTE'], locations: [5] }),
-        }),
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({ workModes: ['REMOTE'], locations: [5] }),
+      }),
     )
     await expect(fetchFilterOptions()).rejects.toThrow(
       'Unexpected filter options response',
@@ -102,5 +100,46 @@ describe('discovery filter API', () => {
       vi.fn().mockResolvedValue({ ok: false, status: 503 }),
     )
     await expect(fetchFilterOptions()).rejects.toThrow('503')
+  })
+})
+
+describe('paged internship API', () => {
+  it('sends explicit pagination and sort with the filters', async () => {
+    const { fetchInternshipPage } = await import('./internshipApi.js')
+    const data = {
+      content: [],
+      page: 1,
+      size: 2,
+      totalElements: 2,
+      totalPages: 1,
+      first: false,
+      last: true,
+    }
+    const fetch = vi
+      .fn()
+      .mockResolvedValue({ ok: true, json: async () => data })
+    vi.stubGlobal('fetch', fetch)
+    expect(
+      await fetchInternshipPage({
+        search: ' Java ',
+        workMode: 'REMOTE',
+        page: 1,
+        size: 2,
+        sort: 'deadline,asc',
+      }),
+    ).toEqual(data)
+    expect(fetch.mock.calls[0][0]).toBe(
+      '/api/internships?search=Java&workMode=REMOTE&page=1&size=2&sort=deadline%2Casc',
+    )
+  })
+  it('rejects a legacy array when a page was requested', async () => {
+    const { fetchInternshipPage } = await import('./internshipApi.js')
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({ ok: true, json: async () => [] }),
+    )
+    await expect(fetchInternshipPage()).rejects.toThrow(
+      'Unexpected internship page response',
+    )
   })
 })
