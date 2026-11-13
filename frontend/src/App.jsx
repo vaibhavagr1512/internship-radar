@@ -16,6 +16,7 @@ import {
 import InternshipCard from './components/InternshipCard.jsx'
 import SearchBar from './components/SearchBar.jsx'
 import ApplicationTracker from './components/ApplicationTracker.jsx'
+import ApplicationDashboard from './components/ApplicationDashboard.jsx'
 import useApplications from './hooks/useApplications.js'
 import {
   fetchInternshipPage,
@@ -169,7 +170,7 @@ export default function App() {
     <div className="app-shell">
       <a
         className="skip-link"
-        href={view === 'explore' ? '#explore' : '#applications'}
+        href={view === 'explore' ? '#explore' : view === 'dashboard' ? '#dashboard' : '#applications'}
       >
         Skip to content
       </a>
@@ -211,6 +212,15 @@ export default function App() {
                 : tracker.applications.length}
             </span>
           </button>
+          <button
+            type="button"
+            className={`nav-item ${view === 'dashboard' ? 'active' : ''}`}
+            onClick={() => setView('dashboard')}
+            aria-current={view === 'dashboard' ? 'page' : undefined}
+          >
+            <BriefcaseBusiness size={19} aria-hidden="true" />
+            Dashboard
+          </button>
           <a className="nav-item" href="#how-it-works">
             <BookOpen size={19} aria-hidden="true" />
             How it works
@@ -243,7 +253,7 @@ export default function App() {
           <span className="breadcrumb">
             Discover <span>/</span>{' '}
             <strong>
-              {view === 'explore' ? 'Internships' : 'My applications'}
+              {view === 'explore' ? 'Internships' : view === 'dashboard' ? 'Dashboard' : 'My applications'}
             </strong>
           </span>
           <span className="student-label">
@@ -312,6 +322,13 @@ export default function App() {
             <p className="tracking-action-notice" role="status">
               {tracker.notice}
             </p>
+          )}
+          {view === 'dashboard' && (
+            <ApplicationDashboard
+              tracker={tracker}
+              onTracker={() => setView('applications')}
+              onExplore={() => setView('explore')}
+            />
           )}
           {view === 'applications' && (
             <ApplicationTracker
