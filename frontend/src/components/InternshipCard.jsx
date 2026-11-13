@@ -1,3 +1,4 @@
+import EligibilityFeedback from './EligibilityFeedback.jsx'
 import {
   ArrowUpRight,
   Bookmark,
@@ -87,6 +88,7 @@ export default function InternshipCard({
         <span className="detail-label">WHO CAN APPLY</span>
         <p>{eligibilityText || 'Eligibility not specified.'}</p>
       </div>
+      <EligibilityFeedback assessment={internship.eligibility} />
       <div className="deadline">
         <CalendarDays size={15} aria-hidden="true" />
         <span>

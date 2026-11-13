@@ -13,7 +13,8 @@
     "test:tracker-api": "node scripts/check-tracker-api.mjs",
     "test:filters-api": "node scripts/check-filters-api.mjs",
     "test:pagination-api": "node scripts/check-pagination-api.mjs",
-    "test:details-api": "node scripts/check-details-api.mjs"
+    "test:details-api": "node scripts/check-details-api.mjs",
+    "test:eligibility-api": "node scripts/check-eligibility-api.mjs"
   },
   "dependencies": {
     "lucide-react": "^0.468.0",

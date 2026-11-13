@@ -143,3 +143,32 @@ describe('paged internship API', () => {
     )
   })
 })
+
+describe('student profile parameters', () => {
+  it('sends profile and match-only without changing existing pagination fields', async () => {
+    const { fetchInternshipPage } = await import('./internshipApi.js')
+    const data = {
+      content: [],
+      page: 0,
+      size: 6,
+      totalElements: 0,
+      totalPages: 0,
+      first: true,
+      last: true,
+    }
+    const fetch = vi
+      .fn()
+      .mockResolvedValue({ ok: true, json: async () => data })
+    vi.stubGlobal('fetch', fetch)
+    await fetchInternshipPage({
+      profile: { degree: 'BTECH', year: 3, cgpa: '8.50' },
+      matchesOnly: true,
+    })
+    const query = new URL(fetch.mock.calls[0][0], 'http://localhost')
+      .searchParams
+    expect(query.get('studentDegree')).toBe('BTECH')
+    expect(query.get('studentCgpa')).toBe('8.50')
+    expect(query.get('matchesOnly')).toBe('true')
+    expect(query.get('page')).toBe('0')
+  })
+})

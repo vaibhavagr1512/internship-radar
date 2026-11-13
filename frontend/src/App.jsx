@@ -23,6 +23,7 @@ import {
 } from './services/internshipApi.js'
 import InternshipFilters from './components/InternshipFilters.jsx'
 import InternshipPagination from './components/InternshipPagination.jsx'
+import StudentEligibilityForm from './components/StudentEligibilityForm.jsx'
 
 export default function App() {
   const [view, setView] = useState('explore')
@@ -32,6 +33,8 @@ export default function App() {
   const [page, setPage] = useState(0)
   const [size, setSize] = useState(6)
   const [sort, setSort] = useState('lastVerifiedDate,desc')
+  const [profile, setProfile] = useState(null)
+  const [matchesOnly, setMatchesOnly] = useState(false)
   const [filters, setFilters] = useState({
     workMode: '',
     roleCategory: '',
@@ -66,6 +69,8 @@ export default function App() {
       page,
       size,
       sort,
+      profile,
+      matchesOnly,
       signal: controller.signal,
     })
       .then((result) => {
@@ -104,6 +109,8 @@ export default function App() {
     page,
     size,
     sort,
+    profile,
+    matchesOnly,
     reload,
   ])
 
@@ -134,8 +141,9 @@ export default function App() {
     }
   }, [optionReload])
 
-  const hasFilters = Object.values(filters).some(Boolean)
+  const hasFilters = Object.values(filters).some(Boolean) || matchesOnly
   function clearAllFilters() {
+    setMatchesOnly(false)
     setPage(0)
     setFilters({ workMode: '', roleCategory: '', location: '' })
     setDraft('')
@@ -369,6 +377,23 @@ export default function App() {
                 }}
                 onClear={clearAllFilters}
                 onRetry={() => setOptionReload((value) => value + 1)}
+              />
+              <StudentEligibilityForm
+                profile={profile}
+                matchesOnly={matchesOnly}
+                onApply={(value) => {
+                  setPage(0)
+                  setProfile(value)
+                }}
+                onClear={() => {
+                  setPage(0)
+                  setMatchesOnly(false)
+                  setProfile(null)
+                }}
+                onMatchesChange={(value) => {
+                  setPage(0)
+                  setMatchesOnly(value)
+                }}
               />
               <InternshipPagination
                 page={page}
