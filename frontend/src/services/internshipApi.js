@@ -54,6 +54,8 @@ export async function fetchInternshipPage({
   page = 0,
   size = 6,
   sort = 'lastVerifiedDate,desc',
+  profile = null,
+  matchesOnly = false,
   signal,
 } = {}) {
   const params = new URLSearchParams()
@@ -67,6 +69,12 @@ export async function fetchInternshipPage({
   params.set('page', String(page))
   params.set('size', String(size))
   params.set('sort', sort)
+  if (profile) {
+    params.set('studentDegree', profile.degree)
+    params.set('studentYear', String(profile.year))
+    params.set('studentCgpa', String(profile.cgpa))
+    if (matchesOnly) params.set('matchesOnly', 'true')
+  }
   const response = await fetch(`/api/internships?${params}`, {
     signal,
     headers: { Accept: 'application/json' },

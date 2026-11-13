@@ -45,11 +45,17 @@ public class InternshipService {
         };
     }
 
-    public record InternshipPage(List<Internship> content, int page, int size, long totalElements,
+    public record InternshipPage(List<?> content, int page, int size, long totalElements,
                                  int totalPages, boolean first, boolean last) {}
 
     public InternshipPage findPage(String search, String workMode, String roleCategory, String location,
                                   Integer requestedPage, Integer requestedSize, String requestedSort) {
+        return findPage(search, workMode, roleCategory, location, requestedPage, requestedSize, requestedSort, null, false);
+    }
+
+    public InternshipPage findPage(String search, String workMode, String roleCategory, String location,
+                                  Integer requestedPage, Integer requestedSize, String requestedSort,
+                                  StudentProfile profile, boolean matchesOnly) {
         int page = requestedPage == null ? 0 : requestedPage;
         int size = requestedSize == null ? 6 : requestedSize;
         if (page < 0 || page > 1_000_000 || size < 1 || size > 50)
@@ -62,6 +68,12 @@ public class InternshipService {
         boolean ascending = parts[1].equals("asc");
         Specification<Internship> specification = (root, query, cb) -> {
             Predicate predicate = matching(search, workMode, roleCategory, location).toPredicate(root, query, cb);
+            if (matchesOnly) {
+                predicate = cb.and(predicate, cb.isTrue(root.get("eligibilityVerified")),
+                    cb.isMember(profile.degree(), root.get("eligibleDegrees")),
+                    cb.isMember(profile.studyYear(), root.get("eligibleStudyYears")),
+                    cb.or(cb.isNull(root.get("minimumCgpa")), cb.lessThanOrEqualTo(root.get("minimumCgpa"), profile.cgpa())));
+            }
             // Count queries must not contain ordering; dates without a deadline always sort last.
             if (query.getResultType() != Long.class && query.getResultType() != long.class) {
                 List<jakarta.persistence.criteria.Order> orders = new ArrayList<>();
@@ -73,7 +85,8 @@ public class InternshipService {
             return predicate;
         };
         var result = repository.findAll(specification, PageRequest.of(page, size));
-        return new InternshipPage(result.getContent(), page, size, result.getTotalElements(), result.getTotalPages(),
+        List<?> content = profile == null ? result.getContent() : result.getContent().stream().map(internship -> AssessedInternship.from(internship, profile)).toList();
+        return new InternshipPage(content, page, size, result.getTotalElements(), result.getTotalPages(),
             result.isFirst(), result.isLast());
     }
 
