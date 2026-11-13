@@ -18,16 +18,20 @@ import SearchBar from './components/SearchBar.jsx'
 import ApplicationTracker from './components/ApplicationTracker.jsx'
 import useApplications from './hooks/useApplications.js'
 import {
-  fetchInternships,
+  fetchInternshipPage,
   fetchFilterOptions,
 } from './services/internshipApi.js'
 import InternshipFilters from './components/InternshipFilters.jsx'
+import InternshipPagination from './components/InternshipPagination.jsx'
 
 export default function App() {
   const [view, setView] = useState('explore')
   const [draft, setDraft] = useState('')
   const [search, setSearch] = useState('')
   const [reload, setReload] = useState(0)
+  const [page, setPage] = useState(0)
+  const [size, setSize] = useState(6)
+  const [sort, setSort] = useState('lastVerifiedDate,desc')
   const [filters, setFilters] = useState({
     workMode: '',
     roleCategory: '',
@@ -41,6 +45,8 @@ export default function App() {
   })
   const [state, setState] = useState({
     internships: [],
+    totalElements: 0,
+    totalPages: 0,
     loading: true,
     error: false,
   })
@@ -48,20 +54,58 @@ export default function App() {
   useEffect(() => {
     const controller = new AbortController()
     let active = true
-    setState({ internships: [], loading: true, error: false })
-    fetchInternships({ search, ...filters, signal: controller.signal })
-      .then((internships) => {
-        if (active) setState({ internships, loading: false, error: false })
+    setState((previous) => ({
+      ...previous,
+      internships: [],
+      loading: true,
+      error: false,
+    }))
+    fetchInternshipPage({
+      search,
+      ...filters,
+      page,
+      size,
+      sort,
+      signal: controller.signal,
+    })
+      .then((result) => {
+        if (!active) return
+        const lastPage = Math.max(0, result.totalPages - 1)
+        if (page > lastPage) {
+          setPage(lastPage)
+          return
+        }
+        setState({
+          internships: result.content,
+          totalElements: result.totalElements,
+          totalPages: result.totalPages,
+          loading: false,
+          error: false,
+        })
       })
       .catch((error) => {
         if (active && error.name !== 'AbortError')
-          setState({ internships: [], loading: false, error: true })
+          setState((previous) => ({
+            ...previous,
+            internships: [],
+            loading: false,
+            error: true,
+          }))
       })
     return () => {
       active = false
       controller.abort()
     }
-  }, [search, filters.workMode, filters.roleCategory, filters.location, reload])
+  }, [
+    search,
+    filters.workMode,
+    filters.roleCategory,
+    filters.location,
+    page,
+    size,
+    sort,
+    reload,
+  ])
 
   const tracker = useApplications()
   const trackedIds = new Set(
@@ -92,6 +136,7 @@ export default function App() {
 
   const hasFilters = Object.values(filters).some(Boolean)
   function clearAllFilters() {
+    setPage(0)
     setFilters({ workMode: '', roleCategory: '', location: '' })
     setDraft('')
     setSearch('')
@@ -99,6 +144,7 @@ export default function App() {
   }
 
   function runSearch(value) {
+    setPage(0)
     const term = value.trim()
     setDraft(term)
     setSearch(term)
@@ -109,7 +155,7 @@ export default function App() {
     runSearch('')
     document.getElementById('internship-search')?.focus()
   }
-  const { internships, loading, error } = state
+  const { internships, totalElements, totalPages, loading, error } = state
 
   return (
     <div className="app-shell">
@@ -317,11 +363,30 @@ export default function App() {
                 loading={optionState.loading}
                 error={optionState.error}
                 canClear={hasFilters || Boolean(search) || Boolean(draft)}
-                onChange={(key, value) =>
+                onChange={(key, value) => {
+                  setPage(0)
                   setFilters((previous) => ({ ...previous, [key]: value }))
-                }
+                }}
                 onClear={clearAllFilters}
                 onRetry={() => setOptionReload((value) => value + 1)}
+              />
+              <InternshipPagination
+                page={page}
+                size={size}
+                sort={sort}
+                totalElements={totalElements}
+                totalPages={totalPages}
+                loading={loading}
+                error={error}
+                onPageChange={setPage}
+                onSizeChange={(value) => {
+                  setPage(0)
+                  setSize(value)
+                }}
+                onSortChange={(value) => {
+                  setPage(0)
+                  setSort(value)
+                }}
               />
               <div className="results-heading">
                 <p role="status" aria-live="polite">
@@ -331,8 +396,8 @@ export default function App() {
                     'Internships unavailable'
                   ) : (
                     <>
-                      <strong>{internships.length}</strong>{' '}
-                      {internships.length === 1 ? 'internship' : 'internships'}
+                      <strong>{totalElements}</strong>{' '}
+                      {totalElements === 1 ? 'internship' : 'internships'}
                       {search ? (
                         <>
                           {' '}

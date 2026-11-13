@@ -2,7 +2,7 @@ import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 import App from './App.jsx'
-import { filterOptions, internships } from './test/fixtures.js'
+import { filterOptions, internships, pageResponse } from './test/fixtures.js'
 
 function installApi() {
   const controls = { optionsFail: false, listFail: false }
@@ -17,15 +17,18 @@ function installApi() {
     const params = new URL(url, 'http://localhost').searchParams
     const search = (params.get('search') || '').toLowerCase()
     return response(
-      internships.filter((item) => {
-        if (!`${item.title} ${item.company}`.toLowerCase().includes(search))
-          return false
-        return ['workMode', 'roleCategory', 'location'].every(
-          (key) =>
-            !params.get(key) ||
-            item[key].toLowerCase() === params.get(key).toLowerCase(),
-        )
-      }),
+      pageResponse(
+        internships.filter((item) => {
+          if (!`${item.title} ${item.company}`.toLowerCase().includes(search))
+            return false
+          return ['workMode', 'roleCategory', 'location'].every(
+            (key) =>
+              !params.get(key) ||
+              item[key].toLowerCase() === params.get(key).toLowerCase(),
+          )
+        }),
+        url,
+      ),
     )
   })
   vi.stubGlobal('fetch', fetch)
@@ -90,7 +93,7 @@ describe('internship discovery filters', () => {
     await user.type(screen.getByRole('searchbox'), 'JAVA{Enter}')
     await expectCards(1)
     expect(fetch).toHaveBeenLastCalledWith(
-      '/api/internships?search=JAVA&workMode=HYBRID&roleCategory=BACKEND&location=Bengaluru',
+      '/api/internships?search=JAVA&workMode=HYBRID&roleCategory=BACKEND&location=Bengaluru&page=0&size=6&sort=lastVerifiedDate%2Cdesc',
       expect.any(Object),
     )
   })
@@ -198,7 +201,10 @@ describe('internship discovery filters', () => {
     )
     await expectCards(1)
     await act(async () =>
-      completeOld({ ok: true, json: async () => [internships[0]] }),
+      completeOld({
+        ok: true,
+        json: async () => pageResponse([internships[0]]),
+      }),
     )
     expect(
       screen.getByRole('heading', { name: 'React Frontend Intern' }),

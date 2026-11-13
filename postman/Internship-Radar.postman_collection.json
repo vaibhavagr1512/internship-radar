@@ -1,6 +1,6 @@
 {
   "info": {
-    "name": "Internship Radar \u2014 Days 1\u20134",
+    "name": "Internship Radar \u2014 Days 1\u20135",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "description": "Run against the local demo app. Selects an untracked demo internship, creates one tracking entry, and removes it. Existing tracking entries are preserved. If interrupted after creation, delete the smokeApplicationId entry manually."
   },
@@ -542,6 +542,126 @@
             "exec": [
               "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
               "pm.test('All records', () => pm.expect(pm.response.json()).to.have.lengthOf(3));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Day 5: First page",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/internships?page=0&size=2"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('Two records, two pages', () => { const p=pm.response.json(); pm.expect(p.content).to.have.lengthOf(2); pm.expect(p.totalElements).to.equal(3); pm.expect(p.totalPages).to.equal(2); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Day 5: Last page",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/internships?page=1&size=2"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('Last partial page', () => { const p=pm.response.json(); pm.expect(p.content).to.have.lengthOf(1); pm.expect(p.last).to.equal(true); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Day 5: Deadline sorting",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/internships?page=0&sort=deadline,asc"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('Dated role first', () => pm.expect(pm.response.json().content[0].deadline).to.equal('2026-12-31'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Day 5: Combined filters",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/internships?page=0&size=2&search=java&workMode=HYBRID"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('One filtered result', () => pm.expect(pm.response.json().totalElements).to.equal(1));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Day 5: Invalid page",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/internships?page=-1"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 400', () => pm.response.to.have.status(400));",
+              "pm.test('Validation response', () => pm.expect(pm.response.json().status).to.equal(400));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Day 5: Invalid sort",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/internships?sort=company,asc"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 400', () => pm.response.to.have.status(400));",
+              "pm.test('Sort allowlist enforced', () => pm.expect(pm.response.json().status).to.equal(400));"
             ]
           }
         }
