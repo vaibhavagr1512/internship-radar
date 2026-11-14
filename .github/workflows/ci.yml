@@ -27,6 +27,63 @@ jobs:
       - name: Build and test backend
         run: mvn -B -ntp -f backend/pom.xml clean verify
 
+  backend-mysql:
+    name: Backend tests (MySQL 8.4)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_DATABASE: internship_radar_ci
+          MYSQL_USER: radar_ci
+          MYSQL_PASSWORD: ci-only-password
+          MYSQL_RANDOM_ROOT_PASSWORD: "yes"
+        ports:
+          - 3306/tcp
+        options: >-
+          --health-cmd="mysql --protocol=TCP --host=127.0.0.1 --user=radar_ci --password=ci-only-password --database=internship_radar_ci --execute='SELECT 1'"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=30
+          --health-start-period=30s
+
+    # Disposable CI credentials; no connection to a developer's local database.
+    env:
+      SPRING_PROFILES_ACTIVE: ci-mysql
+      TEST_DB_USERNAME: radar_ci
+      TEST_DB_PASSWORD: ci-only-password
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+          cache-dependency-path: backend/pom.xml
+
+      - name: Build and test against migrated MySQL schema
+        env:
+          TEST_DB_URL: jdbc:mysql://127.0.0.1:${{ job.services.mysql.ports['3306'] }}/internship_radar_ci?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+        run: mvn -B -ntp -f backend/pom.xml clean verify
+
+      - name: Check migration validation on a second startup
+        env:
+          TEST_DB_URL: jdbc:mysql://127.0.0.1:${{ job.services.mysql.ports['3306'] }}/internship_radar_ci?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+        run: mvn -B -ntp -f backend/pom.xml -Dtest=MySqlMigrationTest test
+
+      - name: Upload MySQL test reports on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-mysql-test-reports
+          path: backend/target/surefire-reports/
+          if-no-files-found: ignore
+          retention-days: 7
+
   frontend:
     name: Frontend tests and build
     runs-on: ubuntu-latest
