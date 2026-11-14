@@ -47,6 +47,10 @@ export default function InternshipCard({
   saving = false,
   saveDisabled = false,
   children,
+  onDetails,
+  onCompare,
+  compared = false,
+  comparisonDisabled = false,
 }) {
   const {
     title,
@@ -117,6 +121,10 @@ export default function InternshipCard({
           <span className="unavailable-link">Link unavailable</span>
         )}
       </div>
+      {onDetails && <a className="details-link" href={`#/internships/${internship.id}`} onClick={(event) => {
+        if (!event.ctrlKey && !event.metaKey && !event.shiftKey && !event.altKey && event.button === 0) { event.preventDefault(); onDetails() }
+      }}>Details for {clean(title)}</a>}
+      {onCompare && <button className="secondary-button compare-toggle" type="button" aria-pressed={compared} disabled={!compared && comparisonDisabled} onClick={onCompare}>{compared ? `Remove ${clean(title)} from comparison` : `Compare ${clean(title)}`}</button>}
       {onSave && (
         <button
           className={`save-button ${isTracked ? 'is-tracked' : ''}`}

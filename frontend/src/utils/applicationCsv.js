@@ -10,6 +10,10 @@ function csvCell(value) {
   return `"${text.replaceAll('"', '""')}"`
 }
 
+export function rowsToCsv(rows) {
+  return '\uFEFF' + rows.map((row) => row.map(csvCell).join(',')).join('\r\n') + '\r\n'
+}
+
 export function applicationsToCsv(applications) {
   const rows = [
     ['Role', 'Company', 'Status', 'Deadline', 'Applied date', 'Notes', 'Official application URL'],
@@ -24,16 +28,20 @@ export function applicationsToCsv(applications) {
     ]),
   ]
   // BOM preserves Unicode in Excel; CRLF and quoting preserve multiline cells.
-  return '\uFEFF' + rows.map((row) => row.map(csvCell).join(',')).join('\r\n') + '\r\n'
+  return rowsToCsv(rows)
 }
 
 export function downloadApplicationsCsv(applications, status = 'ALL') {
-  const blob = new Blob([applicationsToCsv(applications)], { type: 'text/csv;charset=utf-8' })
+  return downloadCsvText(applicationsToCsv(applications), `internship-radar-applications-${status.toLowerCase()}-${localDateKey()}.csv`)
+}
+
+export function downloadCsvText(text, filename) {
+  const blob = new Blob([text], { type: 'text/csv;charset=utf-8' })
   const url = URL.createObjectURL(blob)
   const anchor = document.createElement('a')
   try {
     anchor.href = url
-    anchor.download = `internship-radar-applications-${status.toLowerCase()}-${localDateKey()}.csv`
+    anchor.download = filename
     document.body.append(anchor)
     anchor.click()
   } catch (error) {

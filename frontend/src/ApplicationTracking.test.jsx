@@ -107,6 +107,7 @@ describe('application tracking workflow', () => {
     )
     await screen.findByText('Application details saved.')
     app.unmount()
+    window.history.replaceState(null, '', '/#explore')
     render(<App />)
     await screen.findByRole('button', {
       name: 'Already tracked Java Backend Intern',
@@ -243,6 +244,7 @@ describe('application tracking workflow', () => {
       ).toHaveValue('INTERVIEW'),
     )
     app.unmount()
+    window.history.replaceState(null, '', '/#explore')
     render(<App />)
     await screen.findByRole('button', {
       name: 'Already tracked Java Backend Intern',
