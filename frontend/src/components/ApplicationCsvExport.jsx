@@ -21,7 +21,7 @@ export default function ApplicationCsvExport({ applications, status, disabled })
       <button className="secondary-button" type="button" onClick={exportCsv} disabled={disabled || applications.length === 0} aria-describedby="csv-export-hint">
         <Download size={15} aria-hidden="true" /> Export CSV
       </button>
-      <p id="csv-export-hint">Exports rows shown by your status filter, using saved details. Save note/date edits first.</p>
+      <p id="csv-export-hint">Exports all matching rows across every page, in the selected sort order, using saved details. Save note/date edits first.</p>
       {message && <p role={error ? 'alert' : 'status'}>{message}</p>}
     </div>
   )

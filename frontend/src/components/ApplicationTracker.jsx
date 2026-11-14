@@ -1,8 +1,12 @@
-import { useState } from 'react'
-import { Bookmark, RefreshCw, Trash2 } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { Bookmark, RefreshCw } from 'lucide-react'
 import InternshipCard from './InternshipCard.jsx'
 import ApplicationDetailsEditor from './ApplicationDetailsEditor.jsx'
 import ApplicationCsvExport from './ApplicationCsvExport.jsx'
+import ApplicationRemoval from './ApplicationRemoval.jsx'
+import ApplicationPagination from './ApplicationPagination.jsx'
+import { selectApplications, APPLICATION_SORTS, DEADLINE_FILTERS } from '../utils/applicationView.js'
+import { localDateKey } from '../utils/applicationDashboard.js'
 import {
   APPLICATION_STATUSES,
   statusLabel,
@@ -21,9 +25,26 @@ function displayTimestamp(value) {
 
 export default function ApplicationTracker({ tracker, onExplore }) {
   const [status, setStatus] = useState('ALL')
-  const visible = tracker.applications.filter(
-    (item) => status === 'ALL' || item.status === status,
-  )
+  const [search, setSearch] = useState('')
+  const [sort, setSort] = useState('updatedAt,desc')
+  const [deadline, setDeadline] = useState('ALL')
+  const [requestedPage, setPage] = useState(0)
+  const [size, setSize] = useState(6)
+  const [today, setToday] = useState(localDateKey)
+  useEffect(() => {
+    const update = () => setToday(localDateKey())
+    const timer = setInterval(update, 60_000)
+    window.addEventListener('focus', update)
+    return () => { clearInterval(timer); window.removeEventListener('focus', update) }
+  }, [])
+  const visible = selectApplications(tracker.applications, { status, search, sort, deadline, today })
+  const lastPage = Math.max(0, Math.ceil(visible.length / size) - 1)
+  const page = Math.min(requestedPage, lastPage)
+  useEffect(() => { setPage((current) => Math.min(current, lastPage)) }, [lastPage])
+  const pageRows = visible.slice(page * size, (page + 1) * size)
+  function resetView() {
+    setStatus('ALL'); setSearch(''); setDeadline('ALL'); setSort('updatedAt,desc'); setPage(0)
+  }
   return (
     <section
       className="application-tracker"
@@ -31,7 +52,7 @@ export default function ApplicationTracker({ tracker, onExplore }) {
       aria-labelledby="tracker-heading"
     >
       <p className="eyebrow">ONE PLACE FOR EVERY NEXT STEP</p>
-      <h1 id="tracker-heading">
+      <h1 id="tracker-heading" tabIndex={-1}>
         My applications<span className="heading-dot">.</span>
       </h1>
       <p className="tracker-intro">
@@ -43,13 +64,31 @@ export default function ApplicationTracker({ tracker, onExplore }) {
         status does not submit an application. Apply on the company's official
         website.
       </p>
+      <p className="tracking-note">Save note/date changes before changing filters, sorting, or pages.</p>
+      <div className="tracker-view-controls">
+        <label htmlFor="application-search">Search applications
+          <input id="application-search" type="search" value={search} placeholder="Search by role or company" onChange={(event) => { setSearch(event.target.value); setPage(0) }} />
+        </label>
+        <label htmlFor="application-sort">Sort applications
+          <select id="application-sort" aria-label="Sort applications" value={sort} onChange={(event) => { setSort(event.target.value); setPage(0) }}>
+            {Object.entries(APPLICATION_SORTS).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+          </select>
+        </label>
+        <label htmlFor="application-deadline">Filter applications by deadline
+          <select id="application-deadline" aria-label="Filter applications by deadline" value={deadline} onChange={(event) => { setDeadline(event.target.value); setPage(0) }}>
+            {Object.entries(DEADLINE_FILTERS).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+          </select>
+        </label>
+        <button className="secondary-button" type="button" onClick={resetView}>Reset application view</button>
+      </div>
       <div className="tracker-toolbar">
         <label htmlFor="application-status-filter">
           Filter by status
           <select
             id="application-status-filter"
+            aria-label="Filter by status"
             value={status}
-            onChange={(event) => setStatus(event.target.value)}
+            onChange={(event) => { setStatus(event.target.value); setPage(0) }}
           >
             <option value="ALL">All statuses</option>
             {APPLICATION_STATUSES.map((value) => (
@@ -96,12 +135,12 @@ export default function ApplicationTracker({ tracker, onExplore }) {
           <h2>
             {tracker.applications.length === 0
               ? 'Your next step starts with a save'
-              : 'No applications with this status'}
+              : search.trim() || deadline !== 'ALL' ? 'No applications match these filters' : 'No applications with this status'}
           </h2>
           <p>
             {tracker.applications.length === 0
               ? 'Explore internships and save a role to start tracking your progress.'
-              : 'Choose another status to see more of your applications.'}
+              : 'Reset the application view or change your filters to see more applications.'}
           </p>
           <button
             className="primary-button"
@@ -109,12 +148,12 @@ export default function ApplicationTracker({ tracker, onExplore }) {
             onClick={
               tracker.applications.length === 0
                 ? onExplore
-                : () => setStatus('ALL')
+                : resetView
             }
           >
             {tracker.applications.length === 0
               ? 'Explore internships'
-              : 'Show all statuses'}
+              : search.trim() || deadline !== 'ALL' ? 'Clear application filters' : 'Show all statuses'}
           </button>
         </div>
       ) : (
@@ -124,8 +163,11 @@ export default function ApplicationTracker({ tracker, onExplore }) {
             {visible.length === 1 ? 'application' : 'applications'}
             {status !== 'ALL' ? ` · ${statusLabel(status)}` : ''}
           </p>
+          <ApplicationPagination page={page} size={size} total={visible.length}
+            disabled={tracker.loading || tracker.error || tracker.pending.size > 0}
+            onPage={setPage} onSize={(value) => { setSize(value); setPage(0) }} />
           <div className="internship-grid">
-            {visible.map((application) => {
+            {pageRows.map((application) => {
               const busy = tracker.pending.has(`application:${application.id}`)
               const title = application.internship.title.replace(
                 /\[DEMO\]\s*/gi,
@@ -169,18 +211,11 @@ export default function ApplicationTracker({ tracker, onExplore }) {
                       <br />
                       Updated {displayTimestamp(application.updatedAt)}
                     </p>
-                    <button
-                      className="remove-button"
-                      type="button"
-                      disabled={
-                        busy || tracker.loading || tracker.pending.size > 0
-                      }
-                      onClick={() => tracker.remove(application.id)}
-                      aria-label={`Remove ${title} from tracker`}
-                    >
-                      <Trash2 size={14} aria-hidden="true" />
-                      {busy ? 'Saving change…' : 'Remove from tracker'}
-                    </button>
+                    <ApplicationRemoval
+                      application={application}
+                      disabled={busy || tracker.loading || tracker.pending.size > 0}
+                      onRemove={tracker.remove}
+                    />
                   </div>
                 </InternshipCard>
               )

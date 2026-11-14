@@ -1860,3 +1860,14 @@ select:focus-visible {
 .application-csv-export { margin: 20px 0; }
 .application-csv-export p { color: var(--muted); font-size: 13px; line-height: 1.6; }
 .application-csv-export [role="alert"] { color: #9f3b32; }
+
+.tracker-view-controls { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin: 24px 0; align-items: end; }
+.tracker-view-controls label, .tracker-pagination label { display: flex; flex-direction: column; gap: 8px; font-size: 14px; color: var(--ink); }
+.tracker-view-controls input, .tracker-view-controls select, .tracker-pagination select { width: 100%; min-width: 0; border: 1px solid var(--border); border-radius: 7px; padding: 11px; background: white; color: var(--ink); font: inherit; }
+.tracker-view-controls select:focus-visible, .tracker-pagination select:focus-visible { outline: 3px solid #4a977d; outline-offset: 3px; }
+.tracker-pagination { display: flex; gap: 20px; flex-wrap: wrap; align-items: center; justify-content: space-between; margin: 20px 0; }
+.tracker-pagination p { color: var(--muted); font-size: 14px; }
+.removal-confirmation { padding: 14px; border: 1px solid #dccbbd; border-radius: 8px; background: #fffaf5; }
+.removal-confirmation p { font-size: 13px; line-height: 1.6; }
+.removal-confirmation [role="alert"] { color: #9f3b32; }
+@media (max-width: 700px) { .tracker-view-controls { grid-template-columns: 1fr; } .tracker-pagination { align-items: stretch; flex-direction: column; } }
