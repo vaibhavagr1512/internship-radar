@@ -43,7 +43,7 @@ export default function useApplications() {
 
   async function mutate(key, operation, success, message) {
     // Serialize writes so a duplicate-triggered refresh cannot overwrite another in-flight change.
-    if (locks.current.size > 0 || state.loading || state.error) return
+    if (locks.current.size > 0 || state.loading || state.error) return false
     locks.current.add(key)
     setPending(new Set(locks.current))
     setActionError('')
@@ -55,6 +55,7 @@ export default function useApplications() {
         applications: success(previous.applications, result),
       }))
       setNotice(message)
+      return true
     } catch (error) {
       if (error.status === 409) {
         setNotice(
@@ -71,6 +72,7 @@ export default function useApplications() {
           "We couldn't save your change. Refresh your tracker to check the latest status, then try again.",
         )
       }
+      return false
     } finally {
       locks.current.delete(key)
       setPending(new Set(locks.current))

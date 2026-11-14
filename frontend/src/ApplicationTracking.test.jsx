@@ -286,6 +286,7 @@ describe('application tracking workflow', () => {
         name: 'Remove Java Backend Intern from tracker',
       }),
     )
+    await user.click(screen.getByRole('button', { name: 'Confirm remove Java Backend Intern from tracker' }))
     expect(
       await screen.findByRole('heading', {
         name: 'Your next step starts with a save',
@@ -359,7 +360,8 @@ describe('application tracking workflow', () => {
         name: 'Remove Java Backend Intern from tracker',
       }),
     )
-    expect(await screen.findByRole('alert')).toBeVisible()
+    await user.click(screen.getByRole('button', { name: 'Confirm remove Java Backend Intern from tracker' }))
+    expect(await screen.findByText(/Removal failed\./)).toBeVisible()
     expect(screen.getAllByRole('article')).toHaveLength(1)
   })
   it('refreshes after a duplicate caused by another tab', async () => {
