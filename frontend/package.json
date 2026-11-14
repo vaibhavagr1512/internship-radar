@@ -14,7 +14,8 @@
     "test:filters-api": "node scripts/check-filters-api.mjs",
     "test:pagination-api": "node scripts/check-pagination-api.mjs",
     "test:details-api": "node scripts/check-details-api.mjs",
-    "test:eligibility-api": "node scripts/check-eligibility-api.mjs"
+    "test:eligibility-api": "node scripts/check-eligibility-api.mjs",
+    "test:internship-details-api": "node scripts/check-internship-details-api.mjs"
   },
   "dependencies": {
     "lucide-react": "^0.468.0",

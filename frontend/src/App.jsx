@@ -14,6 +14,10 @@ import {
   TriangleAlert,
 } from 'lucide-react'
 import InternshipCard from './components/InternshipCard.jsx'
+import InternshipDetails from './components/InternshipDetails.jsx'
+import InternshipComparison from './components/InternshipComparison.jsx'
+import useHashView from './hooks/useHashView.js'
+import { toggleComparison } from './utils/internshipComparison.js'
 import SearchBar from './components/SearchBar.jsx'
 import ApplicationTracker from './components/ApplicationTracker.jsx'
 import ApplicationDashboard from './components/ApplicationDashboard.jsx'
@@ -27,7 +31,9 @@ import InternshipPagination from './components/InternshipPagination.jsx'
 import StudentEligibilityForm from './components/StudentEligibilityForm.jsx'
 
 export default function App() {
-  const [view, setView] = useState('explore')
+  const [view, setView, detailId] = useHashView()
+  const [comparison, setComparison] = useState([])
+  function compareRole(role) { setComparison((current) => toggleComparison(current, role)) }
   const [draft, setDraft] = useState('')
   const [search, setSearch] = useState('')
   const [reload, setReload] = useState(0)
@@ -170,7 +176,13 @@ export default function App() {
     <div className="app-shell">
       <a
         className="skip-link"
-        href={view === 'explore' ? '#explore' : view === 'dashboard' ? '#dashboard' : '#applications'}
+        onClick={(event) => {
+          if (view === 'details' || view === 'compare') {
+            event.preventDefault()
+            document.getElementById(view === 'details' ? 'details-heading' : 'comparison-heading')?.focus()
+          }
+        }}
+        href={view === 'details' ? '#internship-details' : view === 'compare' ? '#comparison' : view === 'explore' ? '#explore' : view === 'dashboard' ? '#dashboard' : '#applications'}
       >
         Skip to content
       </a>
@@ -221,7 +233,12 @@ export default function App() {
             <BriefcaseBusiness size={19} aria-hidden="true" />
             Dashboard
           </button>
-          <a className="nav-item" href="#how-it-works">
+          <button type="button" className={`nav-item ${view === 'compare' ? 'active' : ''}`} onClick={() => setView('compare')} aria-current={view === 'compare' ? 'page' : undefined}>
+            <BriefcaseBusiness size={19} aria-hidden="true" />Compare roles ({comparison.length}/3)
+          </button>
+          <a className="nav-item" href="#how-it-works" onClick={(event) => {
+            if (view === 'details' || view === 'compare') { event.preventDefault(); document.getElementById('how-heading')?.focus() }
+          }}>
             <BookOpen size={19} aria-hidden="true" />
             How it works
           </a>
@@ -253,7 +270,7 @@ export default function App() {
           <span className="breadcrumb">
             Discover <span>/</span>{' '}
             <strong>
-              {view === 'explore' ? 'Internships' : view === 'dashboard' ? 'Dashboard' : 'My applications'}
+              {view === 'details' ? 'Internship details' : view === 'compare' ? 'Comparison' : view === 'explore' ? 'Internships' : view === 'dashboard' ? 'Dashboard' : 'My applications'}
             </strong>
           </span>
           <span className="student-label">
@@ -323,6 +340,11 @@ export default function App() {
               {tracker.notice}
             </p>
           )}
+          {view === 'details' && <InternshipDetails key={detailId} id={detailId} tracker={tracker}
+            onBack={() => setView('explore')} onTracker={() => setView('applications')}
+            onCompare={compareRole} compared={comparison.some((role) => String(role.id) === String(detailId))} comparisonFull={comparison.length >= 3} />}
+          {view === 'compare' && <InternshipComparison roles={comparison} onReplace={setComparison}
+            onRemove={compareRole} onClear={() => setComparison([])} onExplore={() => setView('explore')} onDetails={(id) => setView('details', id)} />}
           {view === 'dashboard' && (
             <ApplicationDashboard
               tracker={tracker}
@@ -333,6 +355,7 @@ export default function App() {
           {view === 'applications' && (
             <ApplicationTracker
               tracker={tracker}
+              onDetails={(id) => setView('details', id)}
               onExplore={() => setView('explore')}
             />
           )}
@@ -514,6 +537,10 @@ export default function App() {
                       <InternshipCard
                         key={internship.id}
                         internship={internship}
+                        onDetails={() => setView('details', internship.id)}
+                        onCompare={() => compareRole(internship)}
+                        compared={comparison.some((role) => role.id === internship.id)}
+                        comparisonDisabled={comparison.length >= 3}
                         isTracked={trackedIds.has(internship.id)}
                         saving={tracker.pending.has(`save:${internship.id}`)}
                         saveDisabled={
@@ -536,7 +563,7 @@ export default function App() {
           >
             <div>
               <p className="eyebrow">FROM CURIOUS TO CONFIDENT</p>
-              <h2 id="how-heading">A good next step is an informed one.</h2>
+              <h2 id="how-heading" tabIndex={-1}>A good next step is an informed one.</h2>
             </div>
             <div className="how-steps">
               <p>

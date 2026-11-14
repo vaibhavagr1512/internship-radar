@@ -23,7 +23,7 @@ function displayTimestamp(value) {
       })
 }
 
-export default function ApplicationTracker({ tracker, onExplore }) {
+export default function ApplicationTracker({ tracker, onExplore, onDetails }) {
   const [status, setStatus] = useState('ALL')
   const [search, setSearch] = useState('')
   const [sort, setSort] = useState('updatedAt,desc')
@@ -177,6 +177,7 @@ export default function ApplicationTracker({ tracker, onExplore }) {
                 <InternshipCard
                   key={application.id}
                   internship={application.internship}
+                  onDetails={onDetails ? () => onDetails(application.internship.id) : undefined}
                 >
                   <div className="tracking-controls">
                     <label htmlFor={`application-status-${application.id}`}>

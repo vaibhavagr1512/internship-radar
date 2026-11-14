@@ -21,6 +21,7 @@ export default function InternshipPagination({
           Sort by
           <select
             id="internship-sort"
+            aria-label="Sort by"
             value={sort}
             onChange={(event) => onSortChange(event.target.value)}
           >
@@ -38,6 +39,7 @@ export default function InternshipPagination({
           Per page
           <select
             id="internship-page-size"
+            aria-label="Per page"
             value={size}
             onChange={(event) => onSizeChange(Number(event.target.value))}
           >

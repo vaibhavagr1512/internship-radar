@@ -1,4 +1,15 @@
 /** Requests stay on the same origin; Vite proxies /api only during development. */
+import { validInternshipId } from '../utils/internshipNavigation.js'
+
+export async function fetchInternshipDetails(id, { signal } = {}) {
+  if (!validInternshipId(id)) throw Object.assign(new Error('Invalid internship ID'), { status: 400 })
+  const response = await fetch(`/api/internships/${id}`, { signal, headers: { Accept: 'application/json' } })
+  if (!response.ok) throw Object.assign(new Error(`Internship request failed (${response.status})`), { status: response.status })
+  const data = await response.json()
+  if (!data || String(data.id) !== String(id) || typeof data.title !== 'string' || typeof data.company !== 'string') throw new Error('Unexpected internship details response')
+  return data
+}
+
 export async function fetchInternships({
   search = '',
   workMode = '',
